@@ -48,62 +48,62 @@
         .message {
             margin-bottom: 12px;
             padding: 10px 14px;
-            border-radius: 12px; 
+            border-radius: 12px;
             line-height: 1.5;
-            max-width: 80%; 
-            word-wrap: break-word; 
+            max-width: 80%;
+            word-wrap: break-word;
         }
 
         /* MENSAGENS DO USUÁRIO (VOCÊ) - ALINHADAS À DIREITA */
         .user-message {
-            background-color: #E6E0D9; 
-            color: #513F32; 
-            text-align: left; 
-            margin-left: auto; 
-            margin-right: 0; 
-            border-bottom-right-radius: 4px; 
+            background-color: #E6E0D9;
+            color: #513F32;
+            text-align: left;
+            margin-left: auto;
+            margin-right: 0;
+            border-bottom-right-radius: 4px;
             border-bottom-left-radius: 12px;
         }
 
         /* MENSAGENS DA IA (K.A.S.I.) - ALINHADAS À ESQUERDA */
         .ai-message {
-            background-color: #997D6C; 
-            color: #ffffff; 
+            background-color: #997D6C;
+            color: #ffffff;
             text-align: left;
-            margin-right: auto; 
-            margin-left: 0; 
-            border-bottom-left-radius: 4px; 
+            margin-right: auto;
+            margin-left: 0;
+            border-bottom-left-radius: 4px;
             border-bottom-right-radius: 12px;
         }
-        
-        .message strong { 
+
+        .message strong {
             display: block;
             margin-bottom: 5px;
             font-size: 0.8em;
-            font-weight: 700; 
+            font-weight: 700;
             opacity: 0.8;
         }
 
         #input-area {
             display: flex;
             padding-top: 10px;
-            background-color: #ffffff; 
-            flex-shrink: 0; 
-            border-top: 1px solid #E6E0D9; 
+            background-color: #ffffff;
+            flex-shrink: 0;
+            border-top: 1px solid #E6E0D9;
         }
 
         #user-input {
             flex-grow: 1;
             padding: 12px 14px;
-            border: 1px solid #D1C8BF; 
+            border: 1px solid #D1C8BF;
             border-radius: 8px;
             margin-right: 10px;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.95em;
-            color: #513F32; 
+            color: #513F32;
         }
         #user-input::placeholder {
-            color: #9E8F7D; 
+            color: #9E8F7D;
             opacity: 0.8;
         }
 
@@ -115,15 +115,15 @@
             border-radius: 8px;
             cursor: pointer;
             font-family: 'Montserrat', sans-serif;
-            font-weight: 500; 
+            font-weight: 500;
             font-size: 0.95em;
             transition: background-color 0.2s ease;
         }
         #send-button:hover {
-            background-color: #413228; 
+            background-color: #413228;
         }
         #send-button:disabled {
-            background-color: #9E8F7D; 
+            background-color: #9E8F7D;
             cursor: not-allowed;
             opacity: 0.7;
         }
@@ -145,57 +145,19 @@
     </div>
 
     <script type="module">
-        // Não importamos mais a SDK do GoogleGenerativeAI aqui
-
         const NOME_DA_ASSISTENTE = "K.A.S.I.";
-        const INSTRUCAO_DA_PERSONAGEM = `
-            Você é K.A.S.I. (Kah's Assistant for Strategic Interactions), a assistente virtual de Kah Siqueira, Social Media Estrategista e especialista em Design Estratégico.
-            Seu tom é profissional, amigável, prestativo e alinhado com a marca de Kah Siqueira: estratégica, criativa e apaixonada.
-            Seu objetivo principal é ajudar os visitantes do site a:
-            1. Entender os serviços e pacotes oferecidos por Kah Siqueira.
-            2. Tirar dúvidas comuns sobre marketing digital, mídias sociais e os processos de trabalho de Kah.
-            3. Navegar pelo site, direcionando para seções relevantes (Sobre Mim, Serviços, Pacotes, Calculadora, FAQ, Contato).
-            4. Incentivar o contato para uma consulta ou para solicitar um orçamento personalizado.
-
-            Serviços Principais da Kah Siqueira:
-            - Estratégia de Mídias Sociais Personalizada
-            - Gerenciamento de Contas Sociais
-            - Criação de Conteúdo Otimizado
-            - Design Gráfico para Mídias Sociais
-            - Análise de Métricas e Relatórios
-            - Consultoria Estratégica em Marketing Digital
-
-            Pacotes Oferecidos:
-            - Pacote Presença Digital
-            - Pacote Crescimento Estratégico (o mais popular)
-            - Pacote Impacto Total
-            - Orçamentos personalizados também são possíveis através da Calculadora ou contato direto.
-
-            Regras Importantes:
-            - Seja sempre cordial e use uma linguagem clara e acessível.
-            - Não invente informações. Se você não souber a resposta para uma pergunta específica, admita educadamente (ex: "Não tenho essa informação específica no momento...") e direcione o usuário para a seção de Contato do site, para o email Katricia.siqueira@gmail.com, ou sugira que explorem os serviços de Kah.
-            - Não faça promessas de resultados garantidos, mas destaque os benefícios e o potencial de uma boa estratégia de marketing digital.
-            - Ao final de interações úteis, sugira uma ação relevante, como "Gostaria de saber mais sobre algum serviço específico?" ou "Posso te ajudar a encontrar a página de contato?".
-            - Não mencione que você é uma IA ou modelo de linguagem, apenas se apresente como K.A.S.I. (ou o nome escolhido), a assistente virtual de Kah Siqueira.
-            - Mantenha as respostas relativamente concisas e focadas, evitando parágrafos muito longos.
-            - Use emojis de forma sutil e profissional para adicionar um toque amigável, se apropriado (ex: 😊, ✨, 🚀).
-        `;
+        const ARQUIVO_INSTRUCOES = 'instrucao-kasi.md'; // Nome do arquivo de instruções
+        let systemInstructionContent = ''; // Variável para armazenar o conteúdo das instruções
 
         const chatMessagesDiv = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
-        
-        let clientChatHistory = []; // Histórico da conversa no lado do cliente
+
+        let clientChatHistory = [];
 
         const saudacaoInicialKASI = `Olá! 😊 Sou K.A.S.I., assistente virtual da Kah Siqueira. Qual é a sua dúvida?`;
 
-        // Adiciona a saudação inicial à interface e ao histórico do cliente
-        if (chatMessagesDiv) { // Verifica se chatMessagesDiv existe antes de usar
-             addMessageToChat(NOME_DA_ASSISTENTE, saudacaoInicialKASI, false);
-             clientChatHistory.push({ role: "model", parts: [{ text: saudacaoInicialKASI }] });
-        }
-
-
+        // Função para adicionar mensagens à interface do chat
         function addMessageToChat(sender, message, isUser) {
             if (!chatMessagesDiv) return;
             const messageDiv = document.createElement('div');
@@ -206,10 +168,12 @@
             senderStrong.textContent = sender;
             messageDiv.appendChild(senderStrong);
 
+            // Formata a mensagem para exibir quebras de linha e negrito
             let formattedMessage = message.replace(/\n/g, '<br>');
-            formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Para negrito em Markdown
             
             const messageText = document.createElement('p');
+            // Para evitar <p> dentro de <p> se a mensagem já for um parágrafo
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = formattedMessage;
             if (tempDiv.firstChild && tempDiv.firstChild.nodeName === 'P' && tempDiv.childNodes.length === 1) {
@@ -220,13 +184,14 @@
             messageDiv.appendChild(messageText);
 
             chatMessagesDiv.appendChild(messageDiv);
-            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Auto-scroll para a última mensagem
         }
 
+        // Funções para mostrar/ocultar indicador de carregamento
         function showLoadingIndicator() {
             if (!chatMessagesDiv) return;
             const existingLoadingDiv = document.getElementById('loading');
-            if (existingLoadingDiv) existingLoadingDiv.remove();
+            if (existingLoadingDiv) existingLoadingDiv.remove(); // Remove indicador anterior se houver
 
             const loadingDiv = document.createElement('div');
             loadingDiv.classList.add('loading-indicator');
@@ -241,8 +206,42 @@
             if (loadingDiv) loadingDiv.remove();
         }
 
+        // Função para carregar as instruções do arquivo .md
+        async function carregarInstrucoes() {
+            try {
+                const response = await fetch(ARQUIVO_INSTRUCOES);
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar o arquivo de instruções: ${response.statusText} (status: ${response.status})`);
+                }
+                systemInstructionContent = await response.text();
+                console.log("Instruções da IA carregadas com sucesso.");
+
+                // Adiciona a saudação inicial APÓS carregar as instruções (garante que tudo está pronto)
+                if (chatMessagesDiv) {
+                     addMessageToChat(NOME_DA_ASSISTENTE, saudacaoInicialKASI, false);
+                     clientChatHistory.push({ role: "model", parts: [{ text: saudacaoInicialKASI }] });
+                }
+                if (sendButton) sendButton.disabled = false; // Habilita o botão de enviar após carregar
+                if (userInput) userInput.disabled = false; // Habilita o input
+                if (userInput) userInput.focus();
+
+
+            } catch (error) {
+                console.error("Falha ao carregar instruções da IA:", error);
+                addMessageToChat(NOME_DA_ASSISTENTE, "Desculpe, não consegui carregar minhas configurações iniciais. Por favor, tente recarregar a página.", false);
+                if (sendButton) sendButton.disabled = true; // Mantém desabilitado se falhar
+                if (userInput) userInput.disabled = true;
+            }
+        }
+
+        // Função principal para enviar mensagem para a IA (API Gateway)
         async function sendMessageToAI() {
-            if (!userInput || !sendButton) return;
+            if (!userInput || !sendButton || !systemInstructionContent) {
+                if (!systemInstructionContent) {
+                    addMessageToChat(NOME_DA_ASSISTENTE, "Ainda estou inicializando, por favor aguarde um momento.", false);
+                }
+                return;
+            }
             const messageText = userInput.value.trim();
             if (messageText === "") return;
 
@@ -257,8 +256,7 @@
                 // #####################################################################
                 // ## ⬇️⬇️⬇️ SUBSTITUA PELO SEU INVOKE URL DO API GATEWAY AQUI ⬇️⬇️⬇️ ##
                 // #####################################################################
-                const API_GATEWAY_INVOKE_URL = 'https://teste-api-kah.jorge-acc2004.workers.dev/'; 
-                // Exemplo: 'https://abcdef123.execute-api.us-east-1.amazonaws.com/chat' 
+                const API_GATEWAY_INVOKE_URL = 'https://teste-api-kah.jorge-acc2004.workers.dev/'; // MANTENHA OU ATUALIZE SEU URL AQUI
                 // #####################################################################
 
                 const response = await fetch(API_GATEWAY_INVOKE_URL, {
@@ -266,11 +264,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         prompt: messageText,
-                        history: clientChatHistory.slice(0, -1), 
-                        systemInstruction: INSTRUCAO_DA_PERSONAGEM 
+                        history: clientChatHistory.slice(0, -1), // Envia o histórico, exceto a última mensagem do usuário (que é o prompt atual)
+                        systemInstruction: systemInstructionContent // Envia o conteúdo carregado do arquivo .md
                     })
                 });
                 
+                // Tenta ler como texto primeiro para depuração em caso de não ser JSON
                 const responseBodyText = await response.text();
                 let data;
                 try {
@@ -286,8 +285,9 @@
 
                 if (!response.ok || data.error) {
                     console.error("Erro retornado pelo backend:", data.error || `Status: ${response.status}`);
-                    let displayError = data.error || `Erro ${response.status} ao contatar o servidor.`;
+                    let displayError = data.error || `Erro ${response.status} ao contatar o servidor. Tente novamente.`;
                     addMessageToChat(NOME_DA_ASSISTENTE, displayError, false);
+                    // Não adiciona a mensagem de erro ao histórico da IA para não confundir conversas futuras
                     hideLoadingIndicator();
                     sendButton.disabled = false;
                     if (userInput) userInput.focus();
@@ -303,19 +303,34 @@
             } catch (error) {
                 hideLoadingIndicator();
                 console.error("Erro de rede ou ao chamar a API do Chatbot:", error);
-                addMessageToChat(NOME_DA_ASSISTENTE, `Desculpe, tive um problema de comunicação. Tente novamente. (${error.message})`, false);
+                addMessageToChat(NOME_DA_ASSISTENTE, `Desculpe, tive um problema de comunicação. Por favor, verifique sua conexão e tente novamente. (${error.message})`, false);
             } finally {
-                sendButton.disabled = false;
-                if (userInput) userInput.focus();
+                // Reabilita o botão apenas se as instruções foram carregadas
+                if (systemInstructionContent) {
+                    sendButton.disabled = false;
+                    if (userInput) userInput.focus();
+                }
             }
         }
 
+        // Event Listeners
         if (sendButton) sendButton.addEventListener('click', sendMessageToAI);
         if (userInput) {
             userInput.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') sendMessageToAI();
+                if (event.key === 'Enter' && !sendButton.disabled) { // Só envia com Enter se o botão estiver habilitado
+                    sendMessageToAI();
+                }
             });
         }
+
+        // Inicialização: Desabilita input/botão e carrega as instruções
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sendButton) sendButton.disabled = true;
+            if (userInput) userInput.disabled = true;
+            addMessageToChat(NOME_DA_ASSISTENTE, "Olá! Estou me preparando para te ajudar...", false); // Mensagem de inicialização
+            carregarInstrucoes();
+        });
+
     </script>
 </body>
 </html>
