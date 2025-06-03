@@ -8,146 +8,380 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilos para o chatbot.html para combinar com o site da Kah Siqueira */
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #ffffff; /* Fundo branco para o chat */
-            color: #513F32; /* Cor de texto principal (brand-text) */
+        /* Importação de fonte do Google Fonts (Montserrat) */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+
+        /* Estilos Globais e Reset Básico */
+        * {
             margin: 0;
-            padding: 15px; /* Padding interno para o conteúdo do chat */
+            padding: 0;
+            box-sizing: border-box; /* Garante que padding e border não aumentem o tamanho do elemento */
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif; /* Aplica a fonte da cliente */
+            background-color: #ffffff; /* Fundo branco para a página inteira, da cliente */
+            display: flex; /* Para centralizar o chat-container */
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
+            min-height: 100vh; /* Garante que o body ocupe toda a altura da tela */
+            overflow: hidden; /* Evita barras de rolagem indesejadas no body */
+            color: #513F32; /* Cor de texto principal da cliente */
+        }
+
+        /* Container Principal do Chat */
+        .chat-container {
+            background-color: #ffffff; /* Fundo branco, da cliente */
+            border-radius: 12px; /* Cantos arredondados */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra mais sutil para combinar com o tema claro */
+            width: 100%; /* Ocupa 100% da largura em telas pequenas */
+            max-width: 400px; /* Largura máxima para telas maiores */
+            height: 90vh; /* Ocupa 90% da altura da viewport */
+            max-height: 700px; /* Altura máxima para telas maiores */
+            display: flex;
+            flex-direction: column; /* Organiza os elementos internos em coluna */
+            overflow: hidden; /* Garante que nada transborde */
+        }
+
+        /* Cabeçalho do Chat */
+        .chat-header {
+            background-color: #997D6C; /* brand-primary da cliente */
+            padding: 15px;
+            display: flex;
+            justify-content: space-between; /* Alinha itens nas extremidades */
+            align-items: center;
+            color: #ffffff; /* Cor do texto branco */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Linha divisória sutil */
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Espaçamento entre os itens */
+        }
+
+        .chat-header-left .avatar { /* Estilo para o avatar no cabeçalho */
+            width: 40px;
+            height: 40px;
+            border-radius: 50%; /* Torna a imagem redonda */
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorção */
+        }
+
+        .chat-info .chat-name { /* Nome do chat no cabeçalho */
+            font-weight: 700; /* Negrito para o nome, da fonte Montserrat */
+            font-size: 1.1em;
+        }
+
+        .chat-header button { /* Botões no cabeçalho (ex: configurações, fechar) */
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background-color 0.2s; /* Transição suave para hover */
+        }
+
+        .chat-header button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Área de Mensagens */
+        #chat-messages { /* Mantém o ID existente no chatbot.html */
+            flex-grow: 1; /* Ocupa o espaço restante verticalmente */
+            padding: 15px;
+            overflow-y: auto; /* Adiciona barra de rolagem se o conteúdo for maior */
+            display: flex;
+            flex-direction: column; /* Mensagens se empilham verticalmente */
+            gap: 10px; /* Espaçamento entre as mensagens */
+            background-color: #ffffff; /* Fundo branco da área de mensagens */
+        }
+
+        /* Estilo para a barra de rolagem (WebKit - Chrome, Edge, Safari) */
+        #chat-messages::-webkit-scrollbar {
+            width: 8px; /* Largura da barra de rolagem */
+        }
+
+        #chat-messages::-webkit-scrollbar-track {
+            background: #E6E0D9; /* brand-bg-light da cliente */
+            border-radius: 10px;
+        }
+
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: #997D6C; /* brand-primary da cliente */
+            border-radius: 10px;
+            border: 2px solid #E6E0D9; /* Borda da alça */
+        }
+
+        /* Campo de Entrada de Mensagem */
+        #input-area { /* Mantém o ID existente no chatbot.html */
+            display: flex;
+            padding: 15px;
+            background-color: #ffffff; /* Fundo branco da área de input */
+            border-top: 1px solid #E6E0D9; /* Linha divisória da cliente */
+            gap: 10px; /* Espaçamento entre o input e o botão */
+        }
+
+        #user-input { /* Mantém o ID existente no chatbot.html */
+            flex-grow: 1; /* Ocupa o máximo de largura possível */
+            padding: 12px 15px;
+            border: 1px solid #D1C8BF; /* Borda levemente escura da cliente */
+            border-radius: 25px; /* Cantos bem arredondados, do seu design */
+            background-color: #F8F5F1; /* Fundo do campo de input, cor clara */
+            color: #513F32; /* Cor do texto digitado da cliente */
+            font-size: 0.95em; /* Tamanho da fonte do cliente */
+            outline: none; /* Remove a borda de foco padrão */
+            font-family: 'Montserrat', sans-serif; /* Fonte da cliente */
+        }
+
+        #user-input::placeholder {
+            color: #9E8F7D; /* Cor do texto de placeholder da cliente */
+        }
+
+        #send-button { /* Mantém o ID existente no chatbot.html */
+            background-color: #513F32; /* brand-accent da cliente */
+            color: white;
+            border: none;
+            border-radius: 50%; /* Botão redondo, do seu design */
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-family: 'Montserrat', sans-serif; /* Fonte da cliente */
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        #send-button:hover {
+            background-color: #413228; /* Cor mais escura no hover da cliente */
+        }
+
+        #send-button:disabled {
+            background-color: #9E8F7D; /* Cor desabilitada da cliente */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Ícone de seta SVG para o botão de enviar */
+        #send-button svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff; /* Cor do ícone branco */
+            transform: rotate(0deg); /* Rotaciona a seta para cima */
+            margin-top: -3px; /* Ajuste fino para posicionar a seta */
+            margin-left: 3px;
+        }
+
+        /* Responsividade Básica (para telas menores que 400px) */
+        @media (max-width: 400px) {
+            .chat-container {
+                border-radius: 0; /* Remove cantos arredondados em telas muito pequenas */
+                height: 100vh; /* Ocupa 100% da altura da tela */
+                max-width: 100%; /* Ocupa 100% da largura da tela */
+            }
+        }
+
+        /* Estilos para Mensagens do Chat */
+        .message { /* Container flex para avatar e balão de texto */
+            display: flex;
+            align-items: flex-start; /* Alinha o avatar e o balão no topo */
+            max-width: 85%; /* Limita a largura do balão */
+            margin-bottom: 10px; /* Espaçamento entre mensagens */
+        }
+
+        .message-avatar { /* Estilo para o avatar dentro da mensagem */
+            width: 32px; /* Tamanho do avatar dentro da mensagem */
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0; /* Evita que o avatar encolha */
+            margin-top: 5px; /* Pequeno ajuste para alinhar com o texto */
+        }
+
+        .message-content { /* Container para o nome e o balão de texto */
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Faz o body ocupar toda a altura do iframe */
-            box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
-            overflow: hidden; /* Evita barras de rolagem no body do iframe */
+            margin-left: 8px; /* Espaço entre avatar e balão */
         }
 
-        #chat-messages {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 5px; /* Espaço para a barra de rolagem não sobrepor o conteúdo */
-            margin-bottom: 15px; /* Espaço entre as mensagens e a área de input */
-        }
-
-        /* Custom scrollbar para o chat-messages */
-        #chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        #chat-messages::-webkit-scrollbar-track {
-            background: #E6E0D9; /* brand-bg-light */
-            border-radius: 3px;
-        }
-        #chat-messages::-webkit-scrollbar-thumb {
-            background: #997D6C; /* brand-primary */
-            border-radius: 3px;
-        }
-        #chat-messages::-webkit-scrollbar-thumb:hover {
-            background: #513F32; /* brand-accent */
-        }
-
-        .message {
-            margin-bottom: 12px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            line-height: 1.5;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-
-        /* MENSAGENS DO USUÁRIO (VOCÊ) - ALINHADAS À DIREITA */
-        .user-message {
-            background-color: #E6E0D9;
-            color: #513F32;
-            text-align: left;
-            margin-left: auto;
-            margin-right: 0;
-            border-bottom-right-radius: 4px;
-            border-bottom-left-radius: 12px;
-        }
-
-        /* MENSAGENS DA IA (K.A.S.I.) - ALINHADAS À ESQUERDA */
-        .ai-message {
-            background-color: #997D6C;
-            color: #ffffff;
-            text-align: left;
-            margin-right: auto;
-            margin-left: 0;
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 12px;
-        }
-
-        .message strong {
+        .message-content strong { /* Estilo para o nome do remetente dentro da mensagem */
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 2px; /* Espaço entre nome e texto */
             font-size: 0.8em;
             font-weight: 700;
             opacity: 0.8;
         }
 
-        #input-area {
-            display: flex;
-            padding-top: 10px;
-            background-color: #ffffff;
-            flex-shrink: 0;
-            border-top: 1px solid #E6E0D9;
+        .text-bubble { /* Estilo para o balão de texto da mensagem */
+            padding: 10px 14px; /* Padding do bubble */
+            border-radius: 18px; /* Cantos arredondados do bubble */
+            word-wrap: break-word; /* Quebra palavras longas */
+            line-height: 1.5; /* Espaçamento entre linhas */
+            font-size: 0.95em; /* Tamanho da fonte do cliente */
         }
 
-        #user-input {
-            flex-grow: 1;
-            padding: 12px 14px;
-            border: 1px solid #D1C8BF;
-            border-radius: 8px;
-            margin-right: 10px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.95em;
-            color: #513F32;
-        }
-        #user-input::placeholder {
-            color: #9E8F7D;
-            opacity: 0.8;
+        /* Estilo para Mensagens da IA (K.A.S.I.) */
+        .ai-message {
+            align-self: flex-start; /* Alinha à esquerda no flex container */
         }
 
-        #send-button {
-            padding: 10px 20px;
-            background-color: #513F32; /* brand-accent */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            font-size: 0.95em;
-            transition: background-color 0.2s ease;
+        .ai-message .message-avatar {
+            margin-right: 0; /* Remove margem direita para avatar da IA */
         }
-        #send-button:hover {
-            background-color: #413228;
+
+        .ai-message .message-content {
+            margin-left: 8px; /* Espaço entre avatar e balão da IA */
         }
-        #send-button:disabled {
-            background-color: #9E8F7D;
-            cursor: not-allowed;
-            opacity: 0.7;
+
+        .ai-message .text-bubble {
+            background-color: #E6E0D9; /* brand-bg-light da cliente para mensagens da IA */
+            color: #513F32; /* brand-text da cliente */
+            border-bottom-left-radius: 4px; /* Canto inferior esquerdo menos arredondado */
         }
-        .loading-indicator {
-            text-align: center;
-            padding: 10px 0;
-            font-size: 0.85em;
-            color: #997D6C; /* brand-primary */
-            font-style: italic;
+
+        /* Estilo para Mensagens do Usuário */
+        .user-message {
+            align-self: flex-end; /* Alinha à direita no flex container */
+            flex-direction: row-reverse; /* Inverte a ordem para balão à direita */
+        }
+
+        .user-message .message-avatar {
+            margin-left: 8px; /* Espaço entre avatar e balão para mensagens do usuário */
+            margin-right: 0; /* Remove margem direita para avatar do usuário */
+        }
+
+        .user-message .message-content {
+            margin-right: 8px; /* Espaço entre avatar e balão do usuário */
+            margin-left: 0;
+            align-items: flex-end; /* Alinha o nome e o balão à direita */
+        }
+
+        .user-message .text-bubble {
+            background-color: #997D6C; /* brand-primary da cliente para mensagens do usuário */
+            color: #ffffff; /* Texto branco para contraste */
+            border-bottom-right-radius: 4px; /* Canto inferior direito menos arredondado */
+        }
+
+        .user-message .message-content strong {
+            color: rgba(255, 255, 255, 0.8); /* Cor do nome do remetente para mensagens do usuário */
+        }
+
+        /* Estilo para o Indicador de Digitação (Typing Indicator) */
+        .message.typing-indicator { /* Aplica-se ao div.message quando é um indicador de digitação */
+            background-color: transparent; /* Fundo transparente para o indicador */
+            box-shadow: none;
+            padding: 0; /* Remove padding do bubble */
+            margin-bottom: 10px;
+            align-self: flex-start; /* Alinha à esquerda */
+            display: flex; /* Para alinhar as bolinhas */
+            justify-content: flex-start;
+            align-items: center;
+            width: auto; /* Largura automática */
+            min-height: 30px; /* Altura mínima para as bolinhas */
+        }
+
+        .message.typing-indicator .message-content {
+            flex-direction: row; /* Alinha as bolinhas horizontalmente */
+            align-items: center;
+            margin-left: 8px; /* Espaço entre avatar e bolinhas */
+        }
+
+        .message.typing-indicator strong {
+            display: none; /* Esconde o nome do remetente para o indicador de digitação */
+        }
+
+        /* Animação das Bolinhas */
+        .dot-flashing {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #997D6C; /* Cor das bolinhas da cliente */
+            color: #997D6C;
+            animation: dotFlashing 1s infinite alternate; /* Animação principal */
+            animation-delay: 0s;
+            margin: 0 2px; /* Espaçamento entre as bolinhas */
+        }
+
+        .dot-flashing::before,
+        .dot-flashing::after {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #997D6C;
+            color: #997D6C;
+            animation: dotFlashing 1s infinite alternate;
+        }
+
+        .dot-flashing::before {
+            left: -12px; /* Posição da bolinha da esquerda */
+            animation-delay: 0.2s; /* Atraso na animação */
+        }
+
+        .dot-flashing::after {
+            left: 12px; /* Posição da bolinha da direita */
+            animation-delay: 0.4s; /* Atraso na animação */
+        }
+
+        @keyframes dotFlashing {
+            0% {
+                background-color: #997D6C;
+            }
+            50%,
+            100% {
+                background-color: #513F32; /* Cor mais escura na animação */
+            }
         }
     </style>
 </head>
 <body>
-    <div id="chat-messages">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <button aria-label="Voltar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px">
+                        <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
+                    </svg>
+                </button>
+                <img src="imagens/kah/kasi.png" onerror="this.onerror=null;this.src='https://placehold.co/40x40/997D6C/ffffff?text=K'" alt="Avatar K.A.S.I." class="avatar">
+                <div class="chat-info">
+                    <div class="chat-name">K.A.S.I. Assistente</div>
+                </div>
+            </div>
+            <button aria-label="Opções">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </button>
         </div>
-    <div id="input-area">
-        <input type="text" id="user-input" placeholder="Digite sua mensagem...">
-        <button id="send-button">Enviar</button>
+
+        <div id="chat-messages">
+            </div>
+
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Escreva sua mensagem...">
+            <button id="send-button" aria-label="Enviar mensagem">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <script type="module">
         const NOME_DA_ASSISTENTE = "K.A.S.I.";
-        const ARQUIVO_INSTRUCOES = 'instrucao-kasi.md'; // Nome do arquivo de instruções
+        // O arquivo de instruções agora será carregado do caminho especificado.
+        const ARQUIVO_INSTRUCOES = 'instrucao-kasi.md'; 
         let systemInstructionContent = ''; // Variável para armazenar o conteúdo das instruções
+        let isChatReady = false; // Nova variável de estado para controlar a prontidão do chat
 
         const chatMessagesDiv = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
@@ -164,24 +398,41 @@
             messageDiv.classList.add('message');
             messageDiv.classList.add(isUser ? 'user-message' : 'ai-message');
 
+            // Adiciona o avatar
+            const avatarImg = document.createElement('img');
+            avatarImg.classList.add('message-avatar');
+            if (isUser) {
+                // Placeholder para o avatar do usuário. Você pode substituir por uma imagem real.
+                avatarImg.src = 'https://placehold.co/32x32/D1C8BF/513F32?text=V';
+                avatarImg.alt = 'Avatar do Usuário';
+            } else {
+                // Caminho atualizado para o avatar da K.A.S.I.
+                avatarImg.src = 'imagens/kah/kasi.png';
+                avatarImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/32x32/997D6C/ffffff?text=K'; }; // Fallback
+                avatarImg.alt = 'Avatar K.A.S.I.';
+            }
+            messageDiv.appendChild(avatarImg);
+
+            const messageContentDiv = document.createElement('div');
+            messageContentDiv.classList.add('message-content');
+
             const senderStrong = document.createElement('strong');
             senderStrong.textContent = sender;
-            messageDiv.appendChild(senderStrong);
+            messageContentDiv.appendChild(senderStrong);
+
+            const textBubbleDiv = document.createElement('div');
+            textBubbleDiv.classList.add('text-bubble');
 
             // Formata a mensagem para exibir quebras de linha e negrito
             let formattedMessage = message.replace(/\n/g, '<br>');
             formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Para negrito em Markdown
-            
+
             const messageText = document.createElement('p');
-            // Para evitar <p> dentro de <p> se a mensagem já for um parágrafo
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = formattedMessage;
-            if (tempDiv.firstChild && tempDiv.firstChild.nodeName === 'P' && tempDiv.childNodes.length === 1) {
-                messageText.innerHTML = tempDiv.firstChild.innerHTML;
-            } else {
-                messageText.innerHTML = formattedMessage;
-            }
-            messageDiv.appendChild(messageText);
+            messageText.innerHTML = formattedMessage; // Define innerHTML para texto formatado
+            textBubbleDiv.appendChild(messageText);
+
+            messageContentDiv.appendChild(textBubbleDiv);
+            messageDiv.appendChild(messageContentDiv);
 
             chatMessagesDiv.appendChild(messageDiv);
             chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Auto-scroll para a última mensagem
@@ -193,11 +444,29 @@
             const existingLoadingDiv = document.getElementById('loading');
             if (existingLoadingDiv) existingLoadingDiv.remove(); // Remove indicador anterior se houver
 
-            const loadingDiv = document.createElement('div');
-            loadingDiv.classList.add('loading-indicator');
-            loadingDiv.id = 'loading'; 
-            loadingDiv.textContent = `${NOME_DA_ASSISTENTE} está digitando...`;
-            chatMessagesDiv.appendChild(loadingDiv);
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', 'ai-message', 'typing-indicator'); // Adiciona classes para estilo
+            messageDiv.id = 'loading'; // ID para fácil remoção
+
+            // Adiciona o avatar da assistente ao indicador de digitação
+            const avatarImg = document.createElement('img');
+            avatarImg.classList.add('message-avatar');
+            // Caminho atualizado para o avatar da K.A.S.I.
+            avatarImg.src = 'imagens/kah/kasi.png';
+            avatarImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/32x32/997D6C/ffffff?text=K'; }; // Fallback
+            avatarImg.alt = 'Avatar K.A.S.I.';
+            messageDiv.appendChild(avatarImg);
+
+            const messageContentDiv = document.createElement('div');
+            messageContentDiv.classList.add('message-content'); // Para alinhar as bolinhas
+
+            const dotFlashingDiv = document.createElement('div');
+            dotFlashingDiv.classList.add('dot-flashing'); // Adiciona a classe para a animação das bolinhas
+
+            messageContentDiv.appendChild(dotFlashingDiv); // Adiciona as bolinhas ao messageContentDiv
+            messageDiv.appendChild(messageContentDiv);
+
+            chatMessagesDiv.appendChild(messageDiv);
             chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
@@ -211,10 +480,14 @@
             try {
                 const response = await fetch(ARQUIVO_INSTRUCOES);
                 if (!response.ok) {
+                    // Log mais detalhado para depuração
+                    console.error(`Erro ao carregar o arquivo de instruções: ${response.statusText} (status: ${response.status}). Verifique o caminho: ${ARQUIVO_INSTRUCOES}`);
                     throw new Error(`Erro ao carregar o arquivo de instruções: ${response.statusText} (status: ${response.status})`);
                 }
                 systemInstructionContent = await response.text();
                 console.log("Instruções da IA carregadas com sucesso.");
+                console.log("Conteúdo das instruções (primeiros 100 caracteres):", systemInstructionContent.substring(0, 100) + "..."); // Log para depuração
+                isChatReady = true; // Chat está pronto
 
                 // Adiciona a saudação inicial APÓS carregar as instruções (garante que tudo está pronto)
                 if (chatMessagesDiv) {
@@ -228,7 +501,8 @@
 
             } catch (error) {
                 console.error("Falha ao carregar instruções da IA:", error);
-                addMessageToChat(NOME_DA_ASSISTENTE, "Desculpe, não consegui carregar minhas configurações iniciais. Por favor, tente recarregar a página.", false);
+                addMessageToChat(NOME_DA_ASSISTENTE, `Desculpe, não consegui carregar minhas configurações iniciais. Por favor, verifique se o arquivo '${ARQUIVO_INSTRUCOES}' existe na mesma pasta e tente recarregar a página.`, false);
+                isChatReady = false; // Chat não está pronto
                 if (sendButton) sendButton.disabled = true; // Mantém desabilitado se falhar
                 if (userInput) userInput.disabled = true;
             }
@@ -236,10 +510,8 @@
 
         // Função principal para enviar mensagem para a IA (API Gateway)
         async function sendMessageToAI() {
-            if (!userInput || !sendButton || !systemInstructionContent) {
-                if (!systemInstructionContent) {
-                    addMessageToChat(NOME_DA_ASSISTENTE, "Ainda estou inicializando, por favor aguarde um momento.", false);
-                }
+            if (!isChatReady) { // Verifica se o chat está pronto antes de tentar enviar
+                addMessageToChat(NOME_DA_ASSISTENTE, "Ainda estou inicializando. Por favor, aguarde um momento.", false);
                 return;
             }
             const messageText = userInput.value.trim();
@@ -250,6 +522,7 @@
 
             userInput.value = "";
             sendButton.disabled = true;
+            userInput.disabled = true; // Desabilita o input durante o envio para evitar múltiplas submissões
             showLoadingIndicator();
 
             try {
@@ -268,19 +541,16 @@
                         systemInstruction: systemInstructionContent // Envia o conteúdo carregado do arquivo .md
                     })
                 });
-                
+
                 // Tenta ler como texto primeiro para depuração em caso de não ser JSON
                 const responseBodyText = await response.text();
                 let data;
                 try {
-                    data = JSON.parse(responseBodyText); 
+                    data = JSON.parse(responseBodyText);
                 } catch (e) {
                     console.error("Resposta do servidor não é JSON válido:", responseBodyText);
                     addMessageToChat(NOME_DA_ASSISTENTE, "Desculpe, recebi uma resposta inesperada do servidor.", false);
-                    hideLoadingIndicator();
-                    sendButton.disabled = false;
-                    if (userInput) userInput.focus();
-                    return; 
+                    return; // Não reabilita o botão aqui, deixa o finally fazer isso
                 }
 
                 if (!response.ok || data.error) {
@@ -288,26 +558,24 @@
                     let displayError = data.error || `Erro ${response.status} ao contatar o servidor. Tente novamente.`;
                     addMessageToChat(NOME_DA_ASSISTENTE, displayError, false);
                     // Não adiciona a mensagem de erro ao histórico da IA para não confundir conversas futuras
-                    hideLoadingIndicator();
-                    sendButton.disabled = false;
-                    if (userInput) userInput.focus();
-                    return;
+                    return; // Não reabilita o botão aqui, deixa o finally fazer isso
                 }
 
                 const aiText = data.aiResponse;
-                
+
                 hideLoadingIndicator();
                 addMessageToChat(NOME_DA_ASSISTENTE, aiText, false);
                 clientChatHistory.push({ role: "model", parts: [{ text: aiText }] });
 
             } catch (error) {
-                hideLoadingIndicator();
                 console.error("Erro de rede ou ao chamar a API do Chatbot:", error);
                 addMessageToChat(NOME_DA_ASSISTENTE, `Desculpe, tive um problema de comunicação. Por favor, verifique sua conexão e tente novamente. (${error.message})`, false);
             } finally {
-                // Reabilita o botão apenas se as instruções foram carregadas
-                if (systemInstructionContent) {
+                hideLoadingIndicator(); // Esconde o indicador de carregamento sempre
+                // Reabilita o botão e input APENAS se o chat está pronto para uso
+                if (isChatReady) {
                     sendButton.disabled = false;
+                    if (userInput) userInput.disabled = false;
                     if (userInput) userInput.focus();
                 }
             }
@@ -317,7 +585,8 @@
         if (sendButton) sendButton.addEventListener('click', sendMessageToAI);
         if (userInput) {
             userInput.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter' && !sendButton.disabled) { // Só envia com Enter se o botão estiver habilitado
+                // Só envia com Enter se o botão estiver habilitado e o chat pronto
+                if (event.key === 'Enter' && !sendButton.disabled && isChatReady) {
                     sendMessageToAI();
                 }
             });
@@ -328,7 +597,7 @@
             if (sendButton) sendButton.disabled = true;
             if (userInput) userInput.disabled = true;
             addMessageToChat(NOME_DA_ASSISTENTE, "Olá! Estou me preparando para te ajudar...", false); // Mensagem de inicialização
-            carregarInstrucoes();
+            carregarInstrucoes(); // Chama a função que agora carrega as instruções do arquivo externo
         });
 
     </script>
