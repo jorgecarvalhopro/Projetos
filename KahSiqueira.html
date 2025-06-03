@@ -96,7 +96,12 @@
             opacity: 1;
         }
 
-        /* Removendo o cabeçalho do modal, então o iframe preenche tudo */
+        /* OCULTA O CABEÇALHO DO MODAL NO SITE PRINCIPAL */
+        #chatbotModalHeader {
+            display: none !important; /* Força a ocultação */
+        }
+
+        /* Garante que o iframe preencha todo o modal-content */
         .modal-content iframe {
             flex-grow: 1; /* Permite que o iframe ocupe todo o espaço restante */
             width: 100%;
@@ -385,6 +390,10 @@
 
     <div id="chatbotModal" class="modal-overlay hidden">
         <div class="modal-content">
+            <div id="chatbotModalHeader">
+                <h3>Chat Assistente</h3>
+                <button id="closeChatbotModalBtn" aria-label="Fechar chatbot">&times;</button>
+            </div>
             <iframe id="chatbotFrame" src="" title="Chatbot Assistente"></iframe>
         </div>
     </div>
@@ -424,8 +433,7 @@
             const openChatbotBtn = document.getElementById('openChatbotBtn');
             const chatbotModal = document.getElementById('chatbotModal');
             const chatbotFrame = document.getElementById('chatbotFrame');
-            // O botão de fechar agora pode ser controlado pelo próprio chatbot.html ou por um evento de clique no overlay
-            // const closeChatbotModalBtn = document.getElementById('closeChatbotModalBtn'); // Removido do HTML
+            const closeChatbotModalBtn = document.getElementById('closeChatbotModalBtn'); // Mantido para a lógica de fechar
 
             const chatbotHtmlFile = 'chatbot.html'; // Certifique-se de que este caminho está correto
 
@@ -439,13 +447,24 @@
                     setTimeout(() => { chatbotModal.classList.add('show'); }, 10);
                 });
 
+                // Lógica para fechar o modal
+                if (closeChatbotModalBtn) {
+                    closeChatbotModalBtn.addEventListener('click', () => {
+                        chatbotModal.classList.remove('show');
+                        setTimeout(() => {
+                            chatbotModal.classList.add('hidden');
+                            // Opcional: chatbotFrame.setAttribute('src', 'about:blank'); // Resetar iframe
+                        }, 300);
+                    });
+                }
+
                 // Fechar o modal clicando no overlay
                 chatbotModal.addEventListener('click', function(event) {
                     if (event.target === chatbotModal) { // Verifica se o clique foi no overlay e não no conteúdo
                         chatbotModal.classList.remove('show');
                         setTimeout(() => {
                             chatbotModal.classList.add('hidden');
-                            // chatbotFrame.setAttribute('src', 'about:blank'); // Opcional: resetar iframe para liberar recursos
+                            // Opcional: chatbotFrame.setAttribute('src', 'about:blank'); // Resetar iframe
                         }, 300);
                     }
                 });
