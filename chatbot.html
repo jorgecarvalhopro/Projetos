@@ -18,29 +18,30 @@
             box-sizing: border-box; /* Garante que padding e border não aumentem o tamanho do elemento */
         }
 
+        /* Removendo estilos de body que duplicam o layout do site principal */
         body {
             font-family: 'Montserrat', sans-serif; /* Aplica a fonte da cliente */
-            background-color: #ffffff; /* Fundo branco para a página inteira, da cliente */
-            display: flex; /* Para centralizar o chat-container */
-            justify-content: center; /* Centraliza horizontalmente */
-            align-items: center; /* Centraliza verticalmente */
-            min-height: 100vh; /* Garante que o body ocupe toda a altura da tela */
-            overflow: hidden; /* Evita barras de rolagem indesejadas no body */
+            background-color: transparent; /* Fundo transparente para o iframe */
             color: #513F32; /* Cor de texto principal da cliente */
+            /* Removendo display: flex, justify-content, align-items, min-height para evitar dupla centralização */
+            display: block; /* Volta ao comportamento padrão de bloco */
+            height: 100%; /* Ocupa 100% da altura disponível no iframe */
+            width: 100%; /* Ocupa 100% da largura disponível no iframe */
+            overflow: hidden; /* Evita barras de rolagem indesejadas no body do iframe */
         }
 
-        /* Container Principal do Chat */
+        /* Container Principal do Chat - Ajustado para preencher o iframe */
         .chat-container {
-            background-color: #ffffff; /* Fundo branco, da cliente */
-            border-radius: 12px; /* Cantos arredondados */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra mais sutil para combinar com o tema claro */
-            width: 100%; /* Ocupa 100% da largura em telas pequenas */
-            max-width: 400px; /* Largura máxima para telas maiores */
-            height: 90vh; /* Ocupa 90% da altura da viewport */
-            max-height: 700px; /* Altura máxima para telas maiores */
+            background-color: #ffffff; /* Fundo branco do chat, será visível dentro do iframe */
+            border-radius: 0; /* Remove cantos arredondados, pois o iframe já tem */
+            box-shadow: none; /* Remove sombra, pois o site principal pode ter a sua */
+            width: 100%; /* Ocupa 100% da largura do body do iframe */
+            height: 100%; /* Ocupa 100% da altura do body do iframe */
             display: flex;
             flex-direction: column; /* Organiza os elementos internos em coluna */
             overflow: hidden; /* Garante que nada transborde */
+            max-width: none; /* Remove o max-width fixo */
+            max-height: none; /* Remove o max-height fixo */
         }
 
         /* Cabeçalho do Chat */
@@ -176,12 +177,12 @@
             margin-left: 3px;
         }
 
-        /* Responsividade Básica (para telas menores que 400px) */
+        /* Responsividade Básica (para telas menores que 400px) - Mantenha este media query se o chat for usado em um modal responsivo */
         @media (max-width: 400px) {
             .chat-container {
                 border-radius: 0; /* Remove cantos arredondados em telas muito pequenas */
-                height: 100vh; /* Ocupa 100% da altura da tela */
-                max-width: 100%; /* Ocupa 100% da largura da tela */
+                height: 100%; /* Ocupa 100% da altura do iframe */
+                max-width: 100%; /* Ocupa 100% da largura do iframe */
             }
         }
 
@@ -378,10 +379,9 @@
 
     <script type="module">
         const NOME_DA_ASSISTENTE = "K.A.S.I.";
-        // O arquivo de instruções agora será carregado do caminho especificado.
-        const ARQUIVO_INSTRUCOES = 'instrucao-kasi.md'; 
-        let systemInstructionContent = ''; // Variável para armazenar o conteúdo das instruções
-        let isChatReady = false; // Nova variável de estado para controlar a prontidão do chat
+        const ARQUIVO_INSTRUCOES = 'instrucao-kasi.md';
+        let systemInstructionContent = '';
+        let isChatReady = false;
 
         const chatMessagesDiv = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
@@ -391,24 +391,20 @@
 
         const saudacaoInicialKASI = `Olá! 😊 Sou K.A.S.I., assistente virtual da Kah Siqueira. Qual é a sua dúvida?`;
 
-        // Função para adicionar mensagens à interface do chat
         function addMessageToChat(sender, message, isUser) {
             if (!chatMessagesDiv) return;
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
             messageDiv.classList.add(isUser ? 'user-message' : 'ai-message');
 
-            // Adiciona o avatar
             const avatarImg = document.createElement('img');
             avatarImg.classList.add('message-avatar');
             if (isUser) {
-                // Placeholder para o avatar do usuário. Você pode substituir por uma imagem real.
                 avatarImg.src = 'https://placehold.co/32x32/D1C8BF/513F32?text=V';
                 avatarImg.alt = 'Avatar do Usuário';
             } else {
-                // Caminho atualizado para o avatar da K.A.S.I.
                 avatarImg.src = 'imagens/kah/kasi.png';
-                avatarImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/32x32/997D6C/ffffff?text=K'; }; // Fallback
+                avatarImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/32x32/997D6C/ffffff?text=K'; };
                 avatarImg.alt = 'Avatar K.A.S.I.';
             }
             messageDiv.appendChild(avatarImg);
@@ -423,47 +419,43 @@
             const textBubbleDiv = document.createElement('div');
             textBubbleDiv.classList.add('text-bubble');
 
-            // Formata a mensagem para exibir quebras de linha e negrito
             let formattedMessage = message.replace(/\n/g, '<br>');
-            formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Para negrito em Markdown
+            formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
             const messageText = document.createElement('p');
-            messageText.innerHTML = formattedMessage; // Define innerHTML para texto formatado
+            messageText.innerHTML = formattedMessage;
             textBubbleDiv.appendChild(messageText);
 
             messageContentDiv.appendChild(textBubbleDiv);
             messageDiv.appendChild(messageContentDiv);
 
             chatMessagesDiv.appendChild(messageDiv);
-            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Auto-scroll para a última mensagem
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
-        // Funções para mostrar/ocultar indicador de carregamento
         function showLoadingIndicator() {
             if (!chatMessagesDiv) return;
             const existingLoadingDiv = document.getElementById('loading');
-            if (existingLoadingDiv) existingLoadingDiv.remove(); // Remove indicador anterior se houver
+            if (existingLoadingDiv) existingLoadingDiv.remove();
 
             const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', 'ai-message', 'typing-indicator'); // Adiciona classes para estilo
-            messageDiv.id = 'loading'; // ID para fácil remoção
+            messageDiv.classList.add('message', 'ai-message', 'typing-indicator');
+            messageDiv.id = 'loading';
 
-            // Adiciona o avatar da assistente ao indicador de digitação
             const avatarImg = document.createElement('img');
             avatarImg.classList.add('message-avatar');
-            // Caminho atualizado para o avatar da K.A.S.I.
             avatarImg.src = 'imagens/kah/kasi.png';
-            avatarImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/32x32/997D6C/ffffff?text=K'; }; // Fallback
+            avatarImg.onerror = function() { this.onerror=null; this.src='https://placehold.co/32x32/997D6C/ffffff?text=K'; };
             avatarImg.alt = 'Avatar K.A.S.I.';
             messageDiv.appendChild(avatarImg);
 
             const messageContentDiv = document.createElement('div');
-            messageContentDiv.classList.add('message-content'); // Para alinhar as bolinhas
+            messageContentDiv.classList.add('message-content');
 
             const dotFlashingDiv = document.createElement('div');
-            dotFlashingDiv.classList.add('dot-flashing'); // Adiciona a classe para a animação das bolinhas
+            dotFlashingDiv.classList.add('dot-flashing');
 
-            messageContentDiv.appendChild(dotFlashingDiv); // Adiciona as bolinhas ao messageContentDiv
+            messageContentDiv.appendChild(dotFlashingDiv);
             messageDiv.appendChild(messageContentDiv);
 
             chatMessagesDiv.appendChild(messageDiv);
@@ -475,42 +467,37 @@
             if (loadingDiv) loadingDiv.remove();
         }
 
-        // Função para carregar as instruções do arquivo .md
         async function carregarInstrucoes() {
             try {
                 const response = await fetch(ARQUIVO_INSTRUCOES);
                 if (!response.ok) {
-                    // Log mais detalhado para depuração
                     console.error(`Erro ao carregar o arquivo de instruções: ${response.statusText} (status: ${response.status}). Verifique o caminho: ${ARQUIVO_INSTRUCOES}`);
                     throw new Error(`Erro ao carregar o arquivo de instruções: ${response.statusText} (status: ${response.status})`);
                 }
                 systemInstructionContent = await response.text();
                 console.log("Instruções da IA carregadas com sucesso.");
-                console.log("Conteúdo das instruções (primeiros 100 caracteres):", systemInstructionContent.substring(0, 100) + "..."); // Log para depuração
-                isChatReady = true; // Chat está pronto
+                console.log("Conteúdo das instruções (primeiros 100 caracteres):", systemInstructionContent.substring(0, 100) + "...");
+                isChatReady = true;
 
-                // Adiciona a saudação inicial APÓS carregar as instruções (garante que tudo está pronto)
                 if (chatMessagesDiv) {
                      addMessageToChat(NOME_DA_ASSISTENTE, saudacaoInicialKASI, false);
                      clientChatHistory.push({ role: "model", parts: [{ text: saudacaoInicialKASI }] });
                 }
-                if (sendButton) sendButton.disabled = false; // Habilita o botão de enviar após carregar
-                if (userInput) userInput.disabled = false; // Habilita o input
+                if (sendButton) sendButton.disabled = false;
+                if (userInput) userInput.disabled = false;
                 if (userInput) userInput.focus();
-
 
             } catch (error) {
                 console.error("Falha ao carregar instruções da IA:", error);
-                addMessageToChat(NOME_DA_ASSISTENTE, `Desculpe, não consegui carregar minhas configurações iniciais. Por favor, verifique se o arquivo '${ARQUIVO_INSTRUCOES}' existe na mesma pasta e tente recarregar a página.`, false);
-                isChatReady = false; // Chat não está pronto
-                if (sendButton) sendButton.disabled = true; // Mantém desabilitado se falhar
+                addMessageToChat(NOME_DA_ASSISTENTE, `Desculpe, não consegui carregar minhas configurações iniciais. Por favor, verifique se o arquivo '${ARQUIVO_INSTRUCOES}' existe na mesma pasta do 'chatbot.html' e tente recarregar a página.`, false);
+                isChatReady = false;
+                if (sendButton) sendButton.disabled = true;
                 if (userInput) userInput.disabled = true;
             }
         }
 
-        // Função principal para enviar mensagem para a IA (API Gateway)
         async function sendMessageToAI() {
-            if (!isChatReady) { // Verifica se o chat está pronto antes de tentar enviar
+            if (!isChatReady) {
                 addMessageToChat(NOME_DA_ASSISTENTE, "Ainda estou inicializando. Por favor, aguarde um momento.", false);
                 return;
             }
@@ -522,27 +509,22 @@
 
             userInput.value = "";
             sendButton.disabled = true;
-            userInput.disabled = true; // Desabilita o input durante o envio para evitar múltiplas submissões
+            userInput.disabled = true;
             showLoadingIndicator();
 
             try {
-                // #####################################################################
-                // ## ⬇️⬇️⬇️ SUBSTITUA PELO SEU INVOKE URL DO API GATEWAY AQUI ⬇️⬇️⬇️ ##
-                // #####################################################################
-                const API_GATEWAY_INVOKE_URL = 'https://teste-api-kah.jorge-acc2004.workers.dev/'; // MANTENHA OU ATUALIZE SEU URL AQUI
-                // #####################################################################
+                const API_GATEWAY_INVOKE_URL = 'https://teste-api-kah.jorge-acc2004.workers.dev/';
 
                 const response = await fetch(API_GATEWAY_INVOKE_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         prompt: messageText,
-                        history: clientChatHistory.slice(0, -1), // Envia o histórico, exceto a última mensagem do usuário (que é o prompt atual)
-                        systemInstruction: systemInstructionContent // Envia o conteúdo carregado do arquivo .md
+                        history: clientChatHistory.slice(0, -1),
+                        systemInstruction: systemInstructionContent
                     })
                 });
 
-                // Tenta ler como texto primeiro para depuração em caso de não ser JSON
                 const responseBodyText = await response.text();
                 let data;
                 try {
@@ -550,15 +532,14 @@
                 } catch (e) {
                     console.error("Resposta do servidor não é JSON válido:", responseBodyText);
                     addMessageToChat(NOME_DA_ASSISTENTE, "Desculpe, recebi uma resposta inesperada do servidor.", false);
-                    return; // Não reabilita o botão aqui, deixa o finally fazer isso
+                    return;
                 }
 
                 if (!response.ok || data.error) {
                     console.error("Erro retornado pelo backend:", data.error || `Status: ${response.status}`);
                     let displayError = data.error || `Erro ${response.status} ao contatar o servidor. Tente novamente.`;
                     addMessageToChat(NOME_DA_ASSISTENTE, displayError, false);
-                    // Não adiciona a mensagem de erro ao histórico da IA para não confundir conversas futuras
-                    return; // Não reabilita o botão aqui, deixa o finally fazer isso
+                    return;
                 }
 
                 const aiText = data.aiResponse;
@@ -571,8 +552,7 @@
                 console.error("Erro de rede ou ao chamar a API do Chatbot:", error);
                 addMessageToChat(NOME_DA_ASSISTENTE, `Desculpe, tive um problema de comunicação. Por favor, verifique sua conexão e tente novamente. (${error.message})`, false);
             } finally {
-                hideLoadingIndicator(); // Esconde o indicador de carregamento sempre
-                // Reabilita o botão e input APENAS se o chat está pronto para uso
+                hideLoadingIndicator();
                 if (isChatReady) {
                     sendButton.disabled = false;
                     if (userInput) userInput.disabled = false;
@@ -581,23 +561,20 @@
             }
         }
 
-        // Event Listeners
         if (sendButton) sendButton.addEventListener('click', sendMessageToAI);
         if (userInput) {
             userInput.addEventListener('keypress', function(event) {
-                // Só envia com Enter se o botão estiver habilitado e o chat pronto
                 if (event.key === 'Enter' && !sendButton.disabled && isChatReady) {
                     sendMessageToAI();
                 }
             });
         }
 
-        // Inicialização: Desabilita input/botão e carrega as instruções
         document.addEventListener('DOMContentLoaded', () => {
             if (sendButton) sendButton.disabled = true;
             if (userInput) userInput.disabled = true;
-            addMessageToChat(NOME_DA_ASSISTENTE, "Olá! Estou me preparando para te ajudar...", false); // Mensagem de inicialização
-            carregarInstrucoes(); // Chama a função que agora carrega as instruções do arquivo externo
+            addMessageToChat(NOME_DA_ASSISTENTE, "Olá! Estou me preparando para te ajudar...", false);
+            carregarInstrucoes();
         });
 
     </script>
